@@ -1,0 +1,58 @@
+import java.util.*;
+
+public class BasketballAirline {
+    private Map<String, Flight> gameSchedule;
+    private Map<String, Player> players;
+    private Map<String, SlamDunk> slamDunks;
+
+    public BasketballAirline() {
+        gameSchedule = new HashMap<>();
+        players = new HashMap<>();
+        slamDunks = new HashMap<>();
+    }
+
+    public void addGame(String gameCode, String origin, String destination, int seats, double ticketPrice) {
+        Flight game = new Flight(gameCode, origin, destination, seats, ticketPrice);
+        gameSchedule.put(gameCode, game);
+    }
+
+    public void signUpPlayer(String playerName, String password, String jerseyNumber, String email) {
+        Player player = new Player(playerName, password, jerseyNumber, email);
+        players.put(playerName, player);
+    }
+
+    public boolean bookGame(String playerName, String gameCode, int numTickets) {
+        Player player = players.get(playerName);
+        Flight game = gameSchedule.get(gameCode);
+
+        if (player == null || game == null) {
+            return false;
+        }
+
+        if (game.getAvailableSeats() >= numTickets) {
+            SlamDunk slamDunk = new SlamDunk(playerName, gameCode, numTickets);
+            slamDunks.put(slamDunk.getDunkId(), slamDunk);
+            game.bookSeats(numTickets);
+            return true;
+        }
+
+        return false;
+    }
+
+    public static void main(String[] args) {
+        BasketballAirline basketballAirline = new BasketballAirline();
+
+        basketballAirline.addGame("GAME001", "New York", "Los Angeles", 150, 500.0);
+        basketballAirline.addGame("GAME002", "Chicago", "San Francisco", 120, 450.0);
+
+        basketballAirline.signUpPlayer("LeBronJames", "Lakers2023", "23", "lebron@example.com");
+        basketballAirline.signUpPlayer("StephenCurry", "SplashBrothers", "30", "steph@example.com");
+
+        boolean bookingSuccess = basketballAirline.bookGame("LeBronJames", "GAME001", 2);
+        if (bookingSuccess) {
+            System.out.println("Slam dunk booking successful!");
+        } else {
+            System.out.println("Slam dunk booking failed. Not enough seats or invalid player/game.");
+        }
+    }
+}
